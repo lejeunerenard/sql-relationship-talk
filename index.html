@@ -102,11 +102,11 @@
                </section>
                <section>
                   <h2>Create</h2>
-                  <pre><code class="sql">INSERT INTO authors (first_name, last_name) VALUES ('Stephan', 'Hawking');</code></pre>
+                  <pre><code class="sql">INSERT INTO authors (first_name, last_name) VALUES ('Stephen', 'Hawking');</code></pre>
                   <pre class="fragment"><code>+----+------------+-----------+
 | id | first_name | last_name |
 +----+------------+-----------+
-|  1 | Stephan    | Hawking   |
+|  1 | Stephen    | Hawking   |
 +----+------------+-----------+</code></pre>
                   <p class="fragment">
                      <em>Note:</em> The "1" came from "auto_increment" in the table definition.
@@ -157,7 +157,7 @@
 +----+------------+-----------+
 | id | first_name | last_name |
 +----+------------+-----------+
-|  1 | Stephan    | Hawking   |
+|  1 | Stephen    | Hawking   |
 |  2 | Anne       | Dillard   |
 +----+------------+-----------+
 2 rows in set (0.00 sec)</code></pre>
@@ -167,7 +167,7 @@
 +----+------------+-----------+
 | id | first_name | last_name |
 +----+------------+-----------+
-|  1 | Stephan    | Hawking   |
+|  1 | Stephen    | Hawking   |
 |  2 | Annie      | Dillard   |
 +----+------------+-----------+</code></pre>
                </section>
@@ -201,34 +201,121 @@
                   <pre class="fragment"><code>+----+-------------------------+-----------+----+------------+-----------+
 | id | name                    | author_id | id | first_name | last_name |
 +----+-------------------------+-----------+----+------------+-----------+
-|  1 | Brief History of Time   |         1 |  1 | Stephan    | Hawking   |
+|  1 | Brief History of Time   |         1 |  1 | Stephen    | Hawking   |
 |  2 | Pilgrim at Tinker Creek |         2 |  2 | Annie      | Dillard   |
 |  4 | For the Time Being      |         2 |  2 | Annie      | Dillard   |
 +----+-------------------------+-----------+----+------------+-----------+</code></pre>
 
                   <p class="fragment">Now lets remove dupe columns and only get the author's first and last name.</p>
-                  <pre class="fragment"><code>SELECT b.*, a.first_name, a.last_name FROM books AS b, authors AS a WHERE b.author_id = a.id;</code></pre>
+                  <pre class="fragment"><code>SELECT b.*, a.first_name, a.last_name FROM books AS b, authors AS a
+WHERE b.author_id = a.id;</code></pre>
                   <pre class="fragment"><code>+----+-------------------------+-----------+------------+-----------+
 | id | name                    | author_id | first_name | last_name |
 +----+-------------------------+-----------+------------+-----------+
-|  1 | Brief History of Time   |         1 | Stephan    | Hawking   |
+|  1 | Brief History of Time   |         1 | Stephen    | Hawking   |
 |  2 | Pilgrim at Tinker Creek |         2 | Annie      | Dillard   |
 |  4 | For the Time Being      |         2 | Annie      | Dillard   |
 +----+-------------------------+-----------+------------+-----------+</code></pre>
                </section>
                <section>
+                  <h3>Has Many</h3>
+                  <p>But you can't say a book "has many" authors!</p>
+                  <p class="fragment">Right. Those were technically "Belongs To" relationships.</p>
+                  <p>&nbsp;</p>
+                  <p class="fragment">Get all books by Annie Dillard:</p>
+                  <pre class="fragment"><code>mysql> SELECT b.* FROM books AS b, authors AS a WHERE a.id = b.author_id
+AND a.last_name = "Dillard";
++----+-------------------------+-----------+
+| id | name                    | author_id |
++----+-------------------------+-----------+
+|  2 | Pilgrim at Tinker Creek |         2 |
+|  4 | For the Time Being      |         2 |
++----+-------------------------+-----------+</code></pre>
+               </section>
+               <section>
                   <h3>Many-to-Many</h3>
-                  <p class="fragment">First let's create a genre table.</p>
-                  <pre class="fragment"><code>CREATE TABLE genre (
+                  <p class="fragment" data-fragment-index="1">First let's create a genre table and populate it.</p>
+                  <pre class="fragment" data-fragment-index="2"><code>CREATE TABLE genre (
    id int auto_increment,
    name varchar(128) NOT NULL,
    PRIMARY KEY (id)
 );</code></pre>
+                  <pre class="fragment" data-fragment-index="2"><code>mysql> select * from genre;
++----+------------+
+| id | name       |
++----+------------+
+|  1 | Science    |
+|  2 | Nonfiction |
+|  3 | Fiction    |
+|  4 | Poetry     |
++----+------------+
+4 rows in set (0.01 sec)</code></pre>
+               </section>
+               <section>
+                  <h3>Many-to-Many</h3>
+                  <p>How do we connect genres to books?</p>
+                  <p class="fragment" data-fragment-index="1">Answer: With another TABLE! :D</p>
+                  <pre class="fragment" data-fragment-index="1"><code>CREATE TABLE book_genre (
+   book_id int NOT NULL,
+   genre_id int NOT NULL,
+   PRIMARY KEY (book_id, genre_id)
+);</code></pre>
+                  <p class="fragment" data-fragment-index="2">Now let's create some connections</p>
+                  <pre class="fragment" data-fragment-index="2"><code>INSERT INTO book_genre VALUES (1,1); -- Brief History of Time -> Nonfiction
+INSERT INTO book_genre VALUES (1,2); -- Brief History of Time -> Science
+INSERT INTO book_genre VALUES (2,2); -- Pilgrim at Tinker Creek -> Nonfiction</code></pre>
+               </section>
+               <section>
+                  <h3>Many-to-Many</h3>
+                  <p>Now we can get all books of a genre:</p>
+                  <pre class="fragment"><code>mysql> SELECT b.* FROM books AS b, genre AS g, book_genre AS bg
+WHERE b.id = bg.book_id AND g.id = bg.genre_id AND g.name = "Nonfiction";
++----+-------------------------+-----------+
+| id | name                    | author_id |
++----+-------------------------+-----------+
+|  1 | Brief History of Time   |         1 |
+|  2 | Pilgrim at Tinker Creek |         2 |
++----+-------------------------+-----------+</code></pre>
+                  <p class="fragment">Or get all of a book's genres:</p>
+                  <pre class="fragment"><code>mysql> SELECT g.name FROM books AS b, genre AS g, book_genre AS bg
+WHERE b.id = bg.book_id AND g.id = bg.genre_id
+AND b.name = "Brief History of Time";
++------------+
+| name       |
++------------+
+| Science    |
+| Nonfiction |
++------------+</code></pre>
                </section>
             </section>
             <section data-markdown>
                <script type="text/template">
                   ## Modifying Tables
+
+                  You know, book's don't really have names, they have titles. <!-- .element: class="fragment" -->
+
+                  ```sql
+                  ALTER TABLE books CHANGE name title varchar(128) NOT NULL;
+                  ```
+                  <!-- .element: class="fragment" -->
+
+                  To prove that it changed, we can use the following.  <!-- .element: class="fragment" -->
+
+                  ```sql
+                  describe books;
+                  ```
+                  <!-- .element: class="fragment" -->
+
+                  ```sql
+                  +-----------+--------------+------+-----+---------+----------------+
+                  | Field     | Type         | Null | Key | Default | Extra          |
+                  +-----------+--------------+------+-----+---------+----------------+
+                  | id        | int(11)      | NO   | PRI | NULL    | auto_increment |
+                  | title     | varchar(128) | NO   |     | NULL    |                |
+                  | author_id | int(11)      | NO   |     | NULL    |                |
+                  +-----------+--------------+------+-----+---------+----------------+
+                  ```
+                  <!-- .element: class="fragment" -->
                </script>
             </section>
          </div>
