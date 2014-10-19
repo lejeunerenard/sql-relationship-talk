@@ -397,9 +397,9 @@ AND b.name = "Brief History of Time";
                 if(edge && !myMyo.isLocked){
                   myMyo.unlock(unlock_timeout);
                   if (myMyo.arm == "left") {
-                     Reveal.next();
-                  } else {
                      Reveal.prev();
+                  } else {
+                     Reveal.next();
                   }
                 }
 
@@ -421,9 +421,9 @@ AND b.name = "Brief History of Time";
                if(edge && !myMyo.isLocked){
                   myMyo.unlock(unlock_timeout);
                   if (myMyo.arm == "left") {
-                     Reveal.prev();
-                  } else {
                      Reveal.next();
+                  } else {
+                     Reveal.prev();
                   }
                 }
 
@@ -439,16 +439,16 @@ AND b.name = "Brief History of Time";
             });
             myMyo.on('wave_out_hold', function() {
                if (myMyo.arm == "left") {
-                  hold_next();
-               } else {
                   hold_prev();
+               } else {
+                  hold_next();
                }
             });
             myMyo.on('wave_in_hold', function() {
                if (myMyo.arm == "left") {
-                  hold_prev();
-               } else {
                   hold_next();
+               } else {
+                  hold_prev();
                }
             });
          });
