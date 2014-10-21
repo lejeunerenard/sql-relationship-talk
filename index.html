@@ -410,8 +410,10 @@ AND b.name = "Brief History of Time";
                 // or turn off if it ends.
                 // Otherwise trigger the hold event.
                 myMyo.timer(edge, 1000, function(){
-                  myMyo.trigger('wave_out_hold')
-                })
+                  if(!myMyo.isLocked){
+                     myMyo.trigger('wave_out_hold');
+                  }
+                });
             });
             myMyo.on('wave_in', function(edge){
                console.log('wave in');
@@ -434,8 +436,10 @@ AND b.name = "Brief History of Time";
                 // or turn off if it ends.
                 // Otherwise trigger the hold event.
                 myMyo.timer(edge, 1000, function(){
-                  myMyo.trigger('wave_in_hold')
-                })
+                  if(!myMyo.isLocked){
+                     myMyo.trigger('wave_in_hold');
+                  }
+               });
             });
             myMyo.on('wave_out_hold', function() {
                if (myMyo.arm == "left") {
