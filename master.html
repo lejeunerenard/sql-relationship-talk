@@ -379,6 +379,8 @@ AND b.name = "Brief History of Time";
             }, 100);
          }
 
+         ifvisible.setIdleDuration(3600);
+
          Reveal.addEventListener( 'ready', function( event  ) {
             myMyo = Myo.create()
             myMyo.on('fingers_spread', function(edge){
