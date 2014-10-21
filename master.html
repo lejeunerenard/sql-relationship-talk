@@ -344,10 +344,8 @@ AND b.name = "Brief History of Time";
 				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
 				// parallaxBackgroundSize: '2100px 900px',
 
-            // Secret token
-            // {"secret":"14139423379064624679"}
             multiplex: {
-               secret: null, // null so the clients do not have control of the master presentation
+               secret: "14139423379064624679", // null so the clients do not have control of the master presentation
                id: 'c69972f3628ebb94', // id, obtained from socket.io server
                url: 'revealjs.jit.su:80' // Location of socket.io server
             },
@@ -355,7 +353,7 @@ AND b.name = "Brief History of Time";
 				// Optional libraries used to extend on reveal.js
 				dependencies: [
                { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true  },
-               { src: 'plugin/multiplex/client.js', async: true  },
+               { src: 'plugin/multiplex/master.js', async: true  },
 					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
 					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
@@ -400,6 +398,8 @@ AND b.name = "Brief History of Time";
                 myMyo.vibrate('short');
             });
             myMyo.on('wave_out', function(edge){
+                console.log('wave out');
+
                 // Fire next and make sure the myo stays unlocked
                 // on the start of the pose
                 if(edge && !myMyo.isLocked){
@@ -424,6 +424,8 @@ AND b.name = "Brief History of Time";
                 });
             });
             myMyo.on('wave_in', function(edge){
+               console.log('wave in');
+
                 // Fire prev and make sure the myo stays unlocked
                 // on the start of the pose
                if(edge && !myMyo.isLocked){
