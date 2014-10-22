@@ -324,8 +324,6 @@ AND b.name = "Brief History of Time";
 
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.min.js"></script>
-		<script src="./js/ifvisible.js"></script>
-      <script src="./node_modules/myo/myo.js"></script>
 
 		<script>
 
@@ -356,6 +354,7 @@ AND b.name = "Brief History of Time";
 				dependencies: [
                { src: '//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js', async: true  },
                { src: 'plugin/multiplex/client.js', async: true  },
+               { src: 'plugin/myo/myo.js', async: true  },
 					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
 					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
@@ -364,107 +363,6 @@ AND b.name = "Brief History of Time";
 					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
 				],
 			});
-
-         // Myo hold events
-         var hold_gesture_timer;
-         var unlock_timeout = 5000;
-         function hold_next() {
-            hold_gesture_timer = window.setInterval(function() {
-               Reveal.next();
-               myMyo.unlock(unlock_timeout);
-            }, 100);
-         }
-         function hold_prev() {
-            hold_gesture_timer = window.setInterval(function() {
-               Reveal.prev();
-               myMyo.unlock(unlock_timeout);
-            }, 100);
-         }
-
-         ifvisible.setIdleDuration(3600);
-
-         Reveal.addEventListener( 'ready', function( event  ) {
-            myMyo = Myo.create()
-            myMyo.on('fingers_spread', function(edge){
-            });
-            myMyo.on('thumb_to_pinky', function(edge){
-               if ( ifvisible.now() ) {
-                  myMyo.unlock(2000);
-               }
-            });
-            ifvisible.on("blur", function(){
-               myMyo.lock();
-            });
-            myMyo.on('unlock', function(){
-                myMyo.vibrate();
-            });
-            myMyo.on('lock', function(){
-                myMyo.vibrate('short');
-            });
-            myMyo.on('wave_out', function(edge){
-                // Fire next and make sure the myo stays unlocked
-                // on the start of the pose
-                if(edge && !myMyo.isLocked){
-                  myMyo.unlock(unlock_timeout);
-                  if (myMyo.arm == "left") {
-                     Reveal.prev();
-                  } else {
-                     Reveal.next();
-                  }
-                }
-
-                // Turn off hold timer when pose stops
-                if (!edge) { window.clearInterval(hold_gesture_timer); }
-
-                // Initialize timer when pose starts
-                // or turn off if it ends.
-                // Otherwise trigger the hold event.
-                myMyo.timer(edge, 1000, function(){
-                  if(!myMyo.isLocked){
-                     myMyo.trigger('wave_out_hold');
-                  }
-                });
-            });
-            myMyo.on('wave_in', function(edge){
-                // Fire prev and make sure the myo stays unlocked
-                // on the start of the pose
-               if(edge && !myMyo.isLocked){
-                  myMyo.unlock(unlock_timeout);
-                  if (myMyo.arm == "left") {
-                     Reveal.next();
-                  } else {
-                     Reveal.prev();
-                  }
-                }
-
-                // Turn off hold timer when pose stops
-                if (!edge) { window.clearInterval(hold_gesture_timer); }
-
-                // Initialize timer when pose starts
-                // or turn off if it ends.
-                // Otherwise trigger the hold event.
-                myMyo.timer(edge, 1000, function(){
-                  if(!myMyo.isLocked){
-                     myMyo.trigger('wave_in_hold');
-                  }
-               });
-            });
-            myMyo.on('wave_out_hold', function() {
-               if (myMyo.arm == "left") {
-                  hold_prev();
-               } else {
-                  hold_next();
-               }
-            });
-            myMyo.on('wave_in_hold', function() {
-               if (myMyo.arm == "left") {
-                  hold_next();
-               } else {
-                  hold_prev();
-               }
-            });
-         });
-
 		</script>
 
 
