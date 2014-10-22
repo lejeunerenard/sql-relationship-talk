@@ -288,35 +288,54 @@ AND b.name = "Brief History of Time";
 +------------+</code></pre>
                </section>
             </section>
-            <section data-markdown>
-               <script type="text/template">
-                  ## Modifying Tables
+            <section>
+               <section data-markdown>
+                  <script type="text/template">
+                     ## Modifying Tables
 
-                  You know, book's don't really have names, they have titles. <!-- .element: class="fragment" -->
+                     You know, book's don't really have names, they have titles. <!-- .element: class="fragment" -->
 
-                  ```sql
-                  ALTER TABLE books CHANGE name title varchar(128) NOT NULL;
-                  ```
-                  <!-- .element: class="fragment" -->
+                     ```sql
+                     ALTER TABLE books CHANGE name title varchar(128) NOT NULL;
+                     ```
+                     <!-- .element: class="fragment" -->
 
-                  To prove that it changed, we can use the following.  <!-- .element: class="fragment" -->
+                     To prove that it changed, we can use the following.  <!-- .element: class="fragment" -->
 
-                  ```sql
-                  describe books;
-                  ```
-                  <!-- .element: class="fragment" -->
+                     ```sql
+                     describe books;
+                     ```
+                     <!-- .element: class="fragment" -->
 
-                  ```sql
-                  +-----------+--------------+------+-----+---------+----------------+
-                  | Field     | Type         | Null | Key | Default | Extra          |
-                  +-----------+--------------+------+-----+---------+----------------+
-                  | id        | int(11)      | NO   | PRI | NULL    | auto_increment |
-                  | title     | varchar(128) | NO   |     | NULL    |                |
-                  | author_id | int(11)      | NO   |     | NULL    |                |
-                  +-----------+--------------+------+-----+---------+----------------+
-                  ```
-                  <!-- .element: class="fragment" -->
-               </script>
+                     ```sql
+                     +-----------+--------------+------+-----+---------+----------------+
+                     | Field     | Type         | Null | Key | Default | Extra          |
+                     +-----------+--------------+------+-----+---------+----------------+
+                     | id        | int(11)      | NO   | PRI | NULL    | auto_increment |
+                     | title     | varchar(128) | NO   |     | NULL    |                |
+                     | author_id | int(11)      | NO   |     | NULL    |                |
+                     +-----------+--------------+------+-----+---------+----------------+
+                     ```
+                     <!-- .element: class="fragment" -->
+                  </script>
+               </section>
+               <section data-markdown>
+                  <script type="text/template">
+                     ## Modifying Tables
+
+                     Creating a unique column
+
+                     ```sql
+                     ALTER IGNORE TABLE mytbl ADD UNIQUE (columnName);
+                     ```
+                     <!-- .element: class="fragment" -->
+
+                     *Note* – The `IGNORE` will delete all rows with duplicate values except for the first.
+
+                     <!-- .element: class="fragment" -->
+
+                  </script>
+               </section>
             </section>
          </div>
 
